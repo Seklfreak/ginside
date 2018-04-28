@@ -17,7 +17,7 @@ type Post struct {
 	Date   time.Time
 	Hits   int
 	Votes  int
-	Link   string
+	URL    string
 }
 
 // BoardRecommendedPosts returns the posts from the first page of a dcgall board
@@ -99,7 +99,7 @@ func BoardRecommendedPosts(id string) (posts []Post, err error) {
 			Date:   date,
 			Hits:   hits,
 			Votes:  votes,
-			Link:   baseURL + link,
+			URL:    baseURL + link,
 		})
 	}
 

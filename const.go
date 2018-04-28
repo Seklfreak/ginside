@@ -8,7 +8,7 @@ import (
 
 var (
 	// the gall base url
-	baseURL = "https://gall.dcinside.com"
+	baseURL = "http://gall.dcinside.com"
 	// shows recommended posts for a board
 	boardRecommendedPath = func(id string, page int) string {
 		return baseURL + "/board/lists/?id=" + id + "&page=" + strconv.Itoa(page) + "&exception_mode=recommend"
