@@ -71,13 +71,13 @@ func BoardRecommendedPosts(id string) (posts []Post, err error) {
 		var date time.Time
 		dateText, ok := entryNode.Find("td.t_date").Attr("title")
 		if ok {
-			date, err = time.Parse(dateFormat, dateText)
+			date, err = time.ParseInLocation(dateFormat, dateText, dateLocation)
 			if err != nil {
 				return nil, err
 			}
 		} else {
 			dateText := entryNode.Find("td.t_date").Text()
-			date, err = time.Parse(dateFormatShort, dateText)
+			date, err = time.ParseInLocation(dateFormatShort, dateText, dateLocation)
 			if err != nil {
 				return nil, err
 			}
@@ -90,8 +90,8 @@ func BoardRecommendedPosts(id string) (posts []Post, err error) {
 		votesText := entryNode.Find("td.t_hits").Eq(1).Text()
 		votes, _ := strconv.Atoi(votesText)
 
-		// skip announcements
-		if noticeID == "공지" {
+		// skip announcements and news
+		if noticeID == "공지" || noticeID == "뉴스" {
 			continue
 		}
 
