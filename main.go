@@ -37,7 +37,7 @@ func BoardRecommendedPosts(id string) (posts []Post, err error) {
 func boardRecommendedPostsWithPath(path string) (posts []Post, err error) {
 	// setup http request
 	client := &http.Client{
-		Timeout: time.Second * 30,
+		Timeout: time.Minute * 1,
 	}
 	req, err := http.NewRequest("GET", path, nil)
 	if err != nil {
