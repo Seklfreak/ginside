@@ -7,6 +7,8 @@ import (
 
 	"strings"
 
+	"net/url"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/pkg/errors"
 )
@@ -76,10 +78,22 @@ func boardRecommendedPostsWithPath(path string) (posts []Post, err error) {
 			parts := strings.Split(title, "[")
 			title = strings.Join(parts[0:len(parts)-1], "")
 		}
+
 		link, ok := entryNode.Find("td.t_subject a").Attr("href")
 		if !ok {
 			return nil, errors.New("unable to find link")
 		}
+		link = baseURL + link
+		parsedLink, err := url.Parse(link)
+		if err != nil {
+			return nil, err
+		}
+		// remove page and exception_mode from final url
+		newQueries := parsedLink.Query()
+		newQueries.Del("page")
+		newQueries.Del("exception_mode")
+		parsedLink.RawQuery = newQueries.Encode()
+
 		author, ok := entryNode.Find("td.t_writer").Attr("user_name")
 		if !ok {
 			return nil, errors.New("unable to find author")
@@ -119,7 +133,7 @@ func boardRecommendedPostsWithPath(path string) (posts []Post, err error) {
 			Date:   date,
 			Hits:   hits,
 			Votes:  votes,
-			URL:    baseURL + link,
+			URL:    parsedLink.String(),
 		})
 	}
 
