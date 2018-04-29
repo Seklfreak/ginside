@@ -57,6 +57,7 @@ func BoardRecommendedPosts(id string) (posts []Post, err error) {
 	// parse post content
 	for _, entry := range entries.Nodes {
 		entryNode := goquery.NewDocumentFromNode(entry)
+		//fmt.Println(entryNode.Html())
 		noticeID := entryNode.Find("td.t_notice").Text()
 		title := entryNode.Find("td.t_subject a").Text()
 		link, ok := entryNode.Find("td.t_subject a").Attr("href")
@@ -85,15 +86,9 @@ func BoardRecommendedPosts(id string) (posts []Post, err error) {
 			return nil, errors.New("unable to find date")
 		}
 		hitsText := entryNode.Find("td.t_hits").Eq(0).Text()
-		hits, err := strconv.Atoi(hitsText)
-		if err != nil {
-			return nil, err
-		}
+		hits, _ := strconv.Atoi(hitsText)
 		votesText := entryNode.Find("td.t_hits").Eq(1).Text()
-		votes, err := strconv.Atoi(votesText)
-		if err != nil {
-			return nil, err
-		}
+		votes, _ := strconv.Atoi(votesText)
 
 		// skip announcements
 		if noticeID == "공지" {
