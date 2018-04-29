@@ -13,6 +13,10 @@ var (
 	boardRecommendedPath = func(id string, page int) string {
 		return baseURL + "/board/lists/?id=" + id + "&page=" + strconv.Itoa(page) + "&exception_mode=recommend"
 	}
+	// shows recommended posts for a minor board
+	boardMinorRecommendedPath = func(id string, page int) string {
+		return baseURL + "/mgallery/board/lists/?id=" + id + "&page=" + strconv.Itoa(page) + "&exception_mode=recommend"
+	}
 	// the format used by dcinside
 	dateFormat      = "2006.01.02 15:04:05"
 	dateFormatShort = "2006.01.02"

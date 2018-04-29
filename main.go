@@ -22,13 +22,22 @@ type Post struct {
 	URL    string
 }
 
+func BoardMinorRecommendedPosts(id string) (posts []Post, err error) {
+	return boardRecommendedPostsWithPath(boardMinorRecommendedPath(id, 1))
+}
+
 // BoardRecommendedPosts returns the posts from the first page of a dcgall board
 func BoardRecommendedPosts(id string) (posts []Post, err error) {
+	return boardRecommendedPostsWithPath(boardRecommendedPath(id, 1))
+}
+
+// BoardRecommendedPosts returns the posts from the first page of a dcgall board
+func boardRecommendedPostsWithPath(path string) (posts []Post, err error) {
 	// setup http request
 	client := &http.Client{
 		Timeout: time.Second * 30,
 	}
-	req, err := http.NewRequest("GET", boardRecommendedPath(id, 1), nil)
+	req, err := http.NewRequest("GET", path, nil)
 	if err != nil {
 		return nil, err
 	}

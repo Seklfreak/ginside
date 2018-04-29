@@ -15,3 +15,14 @@ func TestBoardRecommendedPosts(t *testing.T) {
 		t.Fatal("BoardRecommendedPosts returned too few posts: ", strconv.Itoa(len(posts)))
 	}
 }
+
+func TestBoardMinorRecommendedPosts(t *testing.T) {
+	posts, err := BoardMinorRecommendedPosts("sis")
+	if err != nil {
+		t.Fatal("BoardRecommendedPosts returned an error: " + err.Error())
+	}
+
+	if len(posts) < 10 {
+		t.Fatal("BoardRecommendedPosts returned too few posts: ", strconv.Itoa(len(posts)))
+	}
+}
