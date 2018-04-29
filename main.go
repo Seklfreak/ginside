@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"time"
 
+	"strings"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/pkg/errors"
 )
@@ -60,6 +62,11 @@ func BoardRecommendedPosts(id string) (posts []Post, err error) {
 		//fmt.Println(entryNode.Html())
 		noticeID := entryNode.Find("td.t_notice").Text()
 		title := entryNode.Find("td.t_subject a").Text()
+		// remove [n] after title
+		if strings.Contains(title, "[") {
+			parts := strings.Split(title, "[")
+			title = strings.Join(parts[0:len(parts)-1], "")
+		}
 		link, ok := entryNode.Find("td.t_subject a").Attr("href")
 		if !ok {
 			return nil, errors.New("unable to find link")
