@@ -14,7 +14,8 @@ var (
 		return baseURL + "/board/lists/?id=" + id + "&page=" + strconv.Itoa(page) + "&exception_mode=recommend"
 	}
 	// the format used by dcinside
-	dateFormat = "2006.01.02 15:04:05"
+	dateFormat      = "2006.01.02 15:04:05"
+	dateFormatShort = "2006.01.02"
 
 	headerReferer = "http://gall.dcinside.com/"
 	headerAccept  = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"

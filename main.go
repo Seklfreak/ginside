@@ -67,13 +67,22 @@ func BoardRecommendedPosts(id string) (posts []Post, err error) {
 		if !ok {
 			return nil, errors.New("unable to find author")
 		}
+		var date time.Time
 		dateText, ok := entryNode.Find("td.t_date").Attr("title")
-		if !ok {
-			return nil, errors.New("unable to find date")
+		if ok {
+			date, err = time.Parse(dateFormat, dateText)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			dateText := entryNode.Find("td.t_date").Text()
+			date, err = time.Parse(dateFormatShort, dateText)
+			if err != nil {
+				return nil, err
+			}
 		}
-		date, err := time.Parse(dateFormat, dateText)
-		if err != nil {
-			return nil, err
+		if date.IsZero() {
+			return nil, errors.New("unable to find date")
 		}
 		hitsText := entryNode.Find("td.t_hits").Eq(0).Text()
 		hits, err := strconv.Atoi(hitsText)
