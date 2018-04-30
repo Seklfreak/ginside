@@ -103,13 +103,19 @@ func boardRecommendedPostsWithPath(path string) (posts []Post, err error) {
 		if ok {
 			date, err = time.ParseInLocation(dateFormat, dateText, dateLocation)
 			if err != nil {
-				return nil, err
+				date, err = time.ParseInLocation(dateFormatAlt, dateText, dateLocation)
+				if err != nil {
+					return nil, err
+				}
 			}
 		} else {
 			dateText := entryNode.Find("td.t_date").Text()
 			date, err = time.ParseInLocation(dateFormatShort, dateText, dateLocation)
 			if err != nil {
-				return nil, err
+				date, err = time.ParseInLocation(dateFormatShortAlt, dateText, dateLocation)
+				if err != nil {
+					return nil, err
+				}
 			}
 		}
 		if date.IsZero() {

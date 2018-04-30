@@ -18,9 +18,11 @@ var (
 		return baseURL + "/mgallery/board/lists/?id=" + id + "&page=" + strconv.Itoa(page) + "&exception_mode=recommend"
 	}
 	// the format used by dcinside
-	dateFormat      = "2006.01.02 15:04:05"
-	dateFormatShort = "2006.01.02"
-	dateLocation, _ = time.LoadLocation("Asia/Seoul")
+	dateFormat         = "2006.01.02 15:04:05"
+	dateFormatAlt      = "2006/01/02 15:04:05"
+	dateFormatShort    = "2006.01.02"
+	dateFormatShortAlt = "2006/01/02"
+	dateLocation, _    = time.LoadLocation("Asia/Seoul")
 
 	headerReferer = "http://gall.dcinside.com/"
 	headerAccept  = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"
