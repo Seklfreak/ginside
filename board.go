@@ -24,28 +24,18 @@ type Post struct {
 	URL    string
 }
 
-// BoardMinorRecommendedPosts returns the recommended posts from the first page of a dcgall minor board
-func BoardMinorRecommendedPosts(id string) (posts []Post, err error) {
-	return boardRecommendedPostsWithPath(boardMinorPath(id, 1, true))
+// BoardMinorPosts returns the posts from the first page of a dcgall minor board
+func BoardMinorPosts(id string, recommended bool) (posts []Post, err error) {
+	return boardPostsWithPath(boardMinorPath(id, 1, recommended))
 }
 
-// BoardRecommendedPosts returns the recommended posts from the first page of a dcgall board
-func BoardRecommendedPosts(id string) (posts []Post, err error) {
-	return boardRecommendedPostsWithPath(boardPath(id, 1, true))
+// BoardPosts returns the posts from the first page of a dcgall board
+func BoardPosts(id string, recommended bool) (posts []Post, err error) {
+	return boardPostsWithPath(boardPath(id, 1, recommended))
 }
 
-// BoardMinorAllPosts returns the all posts from the first page of a dcgall minor board
-func BoardMinorAllPosts(id string) (posts []Post, err error) {
-	return boardRecommendedPostsWithPath(boardMinorPath(id, 1, false))
-}
-
-// BoardAllPosts returns the all posts from the first page of a dcgall board
-func BoardAllPosts(id string) (posts []Post, err error) {
-	return boardRecommendedPostsWithPath(boardPath(id, 1, false))
-}
-
-// boardRecommendedPostsWithPath returns the posts from the first page of a dcgall board  at the given path
-func boardRecommendedPostsWithPath(path string) (posts []Post, err error) {
+// boardPostsWithPath returns the posts from the first page of a dcgall board  at the given path
+func boardPostsWithPath(path string) (posts []Post, err error) {
 	// setup http request
 	client := &http.Client{
 		Timeout: time.Minute * 1,
