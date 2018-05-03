@@ -75,7 +75,7 @@ func boardPostsWithPath(path string) (posts []Post, err error) {
 		noticeID := entryNode.Find("td.t_notice").Text()
 		title := entryNode.Find("td.t_subject a").Text()
 		// remove [n] after title
-		if strings.Contains(title, "[") {
+		if strings.HasSuffix(title, "]") && strings.Contains(title, "[") {
 			parts := strings.Split(title, "[")
 			title = strings.Join(parts[0:len(parts)-1], "")
 		}
