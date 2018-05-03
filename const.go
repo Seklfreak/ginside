@@ -10,12 +10,20 @@ var (
 	// the gall base url
 	baseURL = "http://gall.dcinside.com"
 	// shows recommended posts for a board
-	boardRecommendedPath = func(id string, page int) string {
-		return baseURL + "/board/lists/?id=" + id + "&page=" + strconv.Itoa(page) + "&exception_mode=recommend"
+	boardPath = func(id string, page int, recommended bool) string {
+		path := baseURL + "/board/lists/?id=" + id + "&page=" + strconv.Itoa(page)
+		if recommended {
+			path += "&exception_mode=recommend"
+		}
+		return path
 	}
 	// shows recommended posts for a minor board
-	boardMinorRecommendedPath = func(id string, page int) string {
-		return baseURL + "/mgallery/board/lists/?id=" + id + "&page=" + strconv.Itoa(page) + "&exception_mode=recommend"
+	boardMinorPath = func(id string, page int, recommended bool) string {
+		path := baseURL + "/mgallery/board/lists/?id=" + id + "&page=" + strconv.Itoa(page)
+		if recommended {
+			path += "&exception_mode=recommend"
+		}
+		return path
 	}
 	// the format used by dcinside
 	dateFormat         = "2006.01.02 15:04:05"

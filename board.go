@@ -24,16 +24,27 @@ type Post struct {
 	URL    string
 }
 
+// BoardMinorRecommendedPosts returns the recommended posts from the first page of a dcgall minor board
 func BoardMinorRecommendedPosts(id string) (posts []Post, err error) {
-	return boardRecommendedPostsWithPath(boardMinorRecommendedPath(id, 1))
+	return boardRecommendedPostsWithPath(boardMinorPath(id, 1, true))
 }
 
-// BoardRecommendedPosts returns the posts from the first page of a dcgall board
+// BoardRecommendedPosts returns the recommended posts from the first page of a dcgall board
 func BoardRecommendedPosts(id string) (posts []Post, err error) {
-	return boardRecommendedPostsWithPath(boardRecommendedPath(id, 1))
+	return boardRecommendedPostsWithPath(boardPath(id, 1, true))
 }
 
-// BoardRecommendedPosts returns the posts from the first page of a dcgall board
+// BoardMinorAllPosts returns the all posts from the first page of a dcgall minor board
+func BoardMinorAllPosts(id string) (posts []Post, err error) {
+	return boardRecommendedPostsWithPath(boardMinorPath(id, 1, false))
+}
+
+// BoardAllPosts returns the all posts from the first page of a dcgall board
+func BoardAllPosts(id string) (posts []Post, err error) {
+	return boardRecommendedPostsWithPath(boardPath(id, 1, false))
+}
+
+// boardRecommendedPostsWithPath returns the posts from the first page of a dcgall board  at the given path
 func boardRecommendedPostsWithPath(path string) (posts []Post, err error) {
 	// setup http request
 	client := &http.Client{
