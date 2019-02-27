@@ -66,21 +66,21 @@ func boardPostsWithPath(path string) (posts []Post, err error) {
 	}
 
 	// parse posts
-	entries := mainDoc.Find(".list_tbody .tb")
+	entries := mainDoc.Find(".gall_list tbody tr")
 
 	// parse post content
 	for _, entry := range entries.Nodes {
 		entryNode := goquery.NewDocumentFromNode(entry)
-		//fmt.Println(entryNode.Html())
-		noticeID := entryNode.Find("td.t_notice").Text()
-		title := entryNode.Find("td.t_subject a").Text()
+
+		noticeID := entryNode.Find("td.gall_num").Text()
+		title := entryNode.Find("td.gall_tit a").Text()
 		// remove [n] after title
 		if strings.HasSuffix(title, "]") && strings.Contains(title, "[") {
 			parts := strings.Split(title, "[")
 			title = strings.Join(parts[0:len(parts)-1], "")
 		}
 
-		link, ok := entryNode.Find("td.t_subject a").Attr("href")
+		link, ok := entryNode.Find("td.gall_tit a").Attr("href")
 		if !ok {
 			return nil, errors.New("unable to find link")
 		}
@@ -95,40 +95,42 @@ func boardPostsWithPath(path string) (posts []Post, err error) {
 		newQueries.Del("exception_mode")
 		parsedLink.RawQuery = newQueries.Encode()
 
-		author, ok := entryNode.Find("td.t_writer").Attr("user_name")
-		if !ok {
-			return nil, errors.New("unable to find author")
-		}
+		author := entryNode.Find("td.gall_writer .nickname").Text()
 		var date time.Time
-		dateText, ok := entryNode.Find("td.t_date").Attr("title")
-		if ok {
+		dateText, ok := entryNode.Find("td.gall_date").Attr("title")
+		if ok && dateText != "" {
 			date, err = time.ParseInLocation(dateFormat, dateText, dateLocation)
 			if err != nil {
 				date, err = time.ParseInLocation(dateFormatAlt, dateText, dateLocation)
 				if err != nil {
-					return nil, err
+					date, err = time.ParseInLocation(dateFormatAlt2, dateText, dateLocation)
+					if err != nil {
+						return nil, err
+					}
 				}
 			}
 		} else {
-			dateText := entryNode.Find("td.t_date").Text()
-			date, err = time.ParseInLocation(dateFormatShort, dateText, dateLocation)
-			if err != nil {
-				date, err = time.ParseInLocation(dateFormatShortAlt, dateText, dateLocation)
+			dateText := entryNode.Find("td.gall_date").Text()
+			if dateText != "" {
+				date, err = time.ParseInLocation(dateFormatShort, dateText, dateLocation)
 				if err != nil {
-					return nil, err
+					date, err = time.ParseInLocation(dateFormatShortAlt, dateText, dateLocation)
+					if err != nil {
+						date, err = time.ParseInLocation(dateFormatShortAlt2, dateText, dateLocation)
+						if err != nil {
+							return nil, err
+						}
+					}
 				}
 			}
 		}
-		if date.IsZero() {
-			return nil, errors.New("unable to find date")
-		}
-		hitsText := entryNode.Find("td.t_hits").Eq(0).Text()
+		hitsText := entryNode.Find("td.gall_count").Eq(0).Text()
 		hits, _ := strconv.Atoi(hitsText)
-		votesText := entryNode.Find("td.t_hits").Eq(1).Text()
+		votesText := entryNode.Find("td.gall_recommend").Eq(1).Text()
 		votes, _ := strconv.Atoi(votesText)
 
-		// skip announcements and news
-		if noticeID == "공지" || noticeID == "뉴스" {
+		// skip announcements, news, and surveys
+		if noticeID == "공지" || noticeID == "뉴스" || noticeID == "설문" {
 			continue
 		}
 
