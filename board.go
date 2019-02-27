@@ -1,6 +1,7 @@
 package ginside
 
 import (
+	"context"
 	"net/http"
 	"strconv"
 	"time"
@@ -25,21 +26,21 @@ type Post struct {
 }
 
 // BoardMinorPosts returns the posts from the first page of a dcgall minor board
-func BoardMinorPosts(id string, recommended bool) (posts []Post, err error) {
-	return boardPostsWithPath(boardMinorPath(id, 1, recommended))
+func (g *GInside) BoardMinorPosts(ctx context.Context, id string, recommended bool) (posts []Post, err error) {
+	return boardPostsWithPath(
+		ctx, g.httpClient, boardMinorPath(id, 1, recommended),
+	)
 }
 
 // BoardPosts returns the posts from the first page of a dcgall board
-func BoardPosts(id string, recommended bool) (posts []Post, err error) {
-	return boardPostsWithPath(boardPath(id, 1, recommended))
+func (g *GInside) BoardPosts(ctx context.Context, id string, recommended bool) (posts []Post, err error) {
+	return boardPostsWithPath(
+		ctx, g.httpClient, boardPath(id, 1, recommended),
+	)
 }
 
 // boardPostsWithPath returns the posts from the first page of a dcgall board  at the given path
-func boardPostsWithPath(path string) (posts []Post, err error) {
-	// setup http request
-	client := &http.Client{
-		Timeout: time.Minute * 1,
-	}
+func boardPostsWithPath(ctx context.Context, client *http.Client, path string) (posts []Post, err error) {
 	req, err := http.NewRequest("GET", path, nil)
 	if err != nil {
 		return nil, err
@@ -47,6 +48,7 @@ func boardPostsWithPath(path string) (posts []Post, err error) {
 	req.Header.Set("Referer", headerReferer)
 	req.Header.Set("User-Agent", randomUserAgent())
 	req.Header.Set("Accept", headerAccept)
+	req = req.WithContext(ctx)
 
 	// do http request
 	res, err := client.Do(req)

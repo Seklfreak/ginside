@@ -1,12 +1,19 @@
 package ginside
 
 import (
+	"context"
+	"net/http"
 	"strconv"
 	"testing"
+	"time"
 )
 
 func TestBoardRecommendedPosts(t *testing.T) {
-	posts, err := BoardPosts("pledis", true)
+	g := NewGInside(&http.Client{
+		Timeout: 1 * time.Minute,
+	})
+
+	posts, err := g.BoardPosts(context.Background(), "pledis", true)
 	if err != nil {
 		t.Fatal("BoardPosts returned an error: " + err.Error())
 	}
@@ -17,7 +24,11 @@ func TestBoardRecommendedPosts(t *testing.T) {
 }
 
 func TestBoardMinorRecommendedPosts(t *testing.T) {
-	posts, err := BoardMinorPosts("sis", true)
+	g := NewGInside(&http.Client{
+		Timeout: 1 * time.Minute,
+	})
+
+	posts, err := g.BoardMinorPosts(context.Background(), "sis", true)
 	if err != nil {
 		t.Fatal("BoardMinorPosts returned an error: " + err.Error())
 	}
@@ -28,7 +39,11 @@ func TestBoardMinorRecommendedPosts(t *testing.T) {
 }
 
 func TestBoardAllPosts(t *testing.T) {
-	posts, err := BoardPosts("pledis", false)
+	g := NewGInside(&http.Client{
+		Timeout: 1 * time.Minute,
+	})
+
+	posts, err := g.BoardPosts(context.Background(), "pledis", false)
 	if err != nil {
 		t.Fatal("BoardPosts returned an error: " + err.Error())
 	}
@@ -39,7 +54,11 @@ func TestBoardAllPosts(t *testing.T) {
 }
 
 func TestBoardMinorAllPosts(t *testing.T) {
-	posts, err := BoardMinorPosts("sis", false)
+	g := NewGInside(&http.Client{
+		Timeout: 1 * time.Minute,
+	})
+
+	posts, err := g.BoardMinorPosts(context.Background(), "sis", false)
 	if err != nil {
 		t.Fatal("BoardMinorPosts returned an error: " + err.Error())
 	}
