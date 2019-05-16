@@ -32,6 +32,7 @@ var (
 	dateFormatShort     = "2006.01.02"
 	dateFormatShortAlt  = "2006/01/02"
 	dateFormatShortAlt2 = "06/01/02"
+	dateFormatShortAlt3 = "02.01.06"
 	dateLocation, _     = time.LoadLocation("Asia/Seoul")
 
 	headerReferer = "http://gall.dcinside.com/"

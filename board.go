@@ -123,7 +123,10 @@ func boardPostsWithPath(ctx context.Context, client *http.Client, path string) (
 					if err != nil {
 						date, err = time.ParseInLocation(dateFormatShortAlt2, dateText, dateLocation)
 						if err != nil {
-							return nil, err
+							date, err = time.ParseInLocation(dateFormatShortAlt3, dateText, dateLocation)
+							if err != nil {
+								return nil, err
+							}
 						}
 					}
 				}
