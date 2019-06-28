@@ -14,13 +14,14 @@ import (
 
 // Post contains information about a single dcinside post
 type Post struct {
-	ID     string
-	Title  string
-	Author string
-	Date   time.Time
-	Hits   int
-	Votes  int
-	URL    string
+	ID      string
+	Subject string
+	Title   string
+	Author  string
+	Date    time.Time
+	Hits    int
+	Votes   int
+	URL     string
 }
 
 // BoardMinorPosts returns the posts from the first page of a dcgall minor board
@@ -83,14 +84,31 @@ func boardPostsWithPath(ctx context.Context, client *http.Client, path string) (
 	for _, entry := range entries.Nodes {
 		entryNode := goquery.NewDocumentFromNode(entry)
 
+		subjectHTML, err := entryNode.Find("td.gall_subject").Html()
+		if err != nil {
+			return nil, err
+		}
+
 		noticeID := entryNode.Find("td.gall_num").Text()
+		subject := entryNode.Find("td.gall_subject").Text()
 		title := entryNode.Find("td.gall_tit a").First().Text()
+
+		// skip pinned
+		if strings.Contains(subjectHTML, "<b>") {
+			continue
+		}
+		_, err = strconv.Atoi(noticeID)
+		if err != nil {
+			continue
+		}
 
 		link, ok := entryNode.Find("td.gall_tit a").Attr("href")
 		if !ok {
 			return nil, errors.New("unable to find link")
 		}
-		link = baseURL + link
+		if !strings.HasPrefix(link, "http") {
+			link = baseURL + link
+		}
 		parsedLink, err := url.Parse(link)
 		if err != nil {
 			return nil, err
@@ -141,20 +159,16 @@ func boardPostsWithPath(ctx context.Context, client *http.Client, path string) (
 		votesText := entryNode.Find("td.gall_recommend").Eq(1).Text()
 		votes, _ := strconv.Atoi(votesText)
 
-		// skip announcements, news, surveys, or issues
-		if noticeID == "공지" || noticeID == "뉴스" || noticeID == "설문" || noticeID == "이슈" {
-			continue
-		}
-
 		// add to list of posts
 		posts = append(posts, Post{
-			ID:     noticeID,
-			Title:  title,
-			Author: author,
-			Date:   date,
-			Hits:   hits,
-			Votes:  votes,
-			URL:    parsedLink.String(),
+			ID:      noticeID,
+			Subject: subject,
+			Title:   title,
+			Author:  author,
+			Date:    date,
+			Hits:    hits,
+			Votes:   votes,
+			URL:     parsedLink.String(),
 		})
 	}
 
