@@ -137,8 +137,8 @@ func boardPostsWithPath(ctx context.Context, client *http.Client, path string) (
 		votesText := entryNode.Find("td.gall_recommend").Eq(1).Text()
 		votes, _ := strconv.Atoi(votesText)
 
-		// skip announcements, news, and surveys
-		if noticeID == "공지" || noticeID == "뉴스" || noticeID == "설문" {
+		// skip announcements, news, surveys, or issues
+		if noticeID == "공지" || noticeID == "뉴스" || noticeID == "설문" || noticeID == "이슈" {
 			continue
 		}
 
