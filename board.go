@@ -75,12 +75,7 @@ func boardPostsWithPath(ctx context.Context, client *http.Client, path string) (
 		entryNode := goquery.NewDocumentFromNode(entry)
 
 		noticeID := entryNode.Find("td.gall_num").Text()
-		title := entryNode.Find("td.gall_tit a").Text()
-		// remove [n] after title
-		if strings.HasSuffix(title, "]") && strings.Contains(title, "[") {
-			parts := strings.Split(title, "[")
-			title = strings.Join(parts[0:len(parts)-1], "")
-		}
+		title := entryNode.Find("td.gall_tit a").First().Text()
 
 		link, ok := entryNode.Find("td.gall_tit a").Attr("href")
 		if !ok {
