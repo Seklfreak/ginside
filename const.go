@@ -2,6 +2,7 @@ package ginside
 
 import (
 	"math/rand"
+	"regexp"
 	"strconv"
 	"time"
 )
@@ -53,4 +54,6 @@ var (
 		rand.Seed(time.Now().Unix())
 		return userAgents[rand.Intn(len(userAgents))]
 	}
+
+	forwardRegex = regexp.MustCompile(`location\.replace\("([^"]+)"\)`)
 )

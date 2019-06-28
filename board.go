@@ -3,12 +3,10 @@ package ginside
 import (
 	"context"
 	"net/http"
-	"strconv"
-	"time"
-
-	"strings"
-
 	"net/url"
+	"strconv"
+	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/pkg/errors"
@@ -65,6 +63,17 @@ func boardPostsWithPath(ctx context.Context, client *http.Client, path string) (
 	mainDoc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
 		return nil, err
+	}
+
+	mainDocHTML, err := mainDoc.Html()
+	if err != nil {
+		return nil, err
+	}
+
+	// follow JavaScript forwarding if necessary
+	parts := forwardRegex.FindStringSubmatch(mainDocHTML)
+	if len(parts) >= 2 {
+		return boardPostsWithPath(ctx, client, parts[1])
 	}
 
 	// parse posts
