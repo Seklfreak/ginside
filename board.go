@@ -109,12 +109,12 @@ func boardPostsWithPath(ctx context.Context, client *http.Client, path string) (
 		if !strings.HasPrefix(link, "http") {
 			link = baseURL + link
 		}
+		if strings.Contains(link, "javascript:;") {
+			continue
+		}
 		parsedLink, err := url.Parse(link)
 		if err != nil {
 			return nil, err
-		}
-		if strings.Contains(parsedLink.String(), "javascript:;") {
-			continue
 		}
 		// remove page and exception_mode from final url
 		newQueries := parsedLink.Query()
