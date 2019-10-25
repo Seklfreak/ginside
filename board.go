@@ -40,25 +40,11 @@ func (g *GInside) BoardPosts(ctx context.Context, id string, recommended bool) (
 
 // boardPostsWithPath returns the posts from the first page of a dcgall board  at the given path
 func boardPostsWithPath(ctx context.Context, client *http.Client, path string) (posts []Post, err error) {
-	req, err := http.NewRequest("GET", path, nil)
+	res, err := makeRequest(ctx, client, path)
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("Referer", headerReferer)
-	req.Header.Set("User-Agent", randomUserAgent())
-	req.Header.Set("Accept", headerAccept)
-	req = req.WithContext(ctx)
-
-	// do http request
-	res, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
 	defer res.Body.Close() // nolint: errcheck
-	if res.StatusCode != 200 {
-		return nil, errors.New("unexpected status code: " + strconv.Itoa(res.StatusCode))
-	}
 
 	// parse html
 	mainDoc, err := goquery.NewDocumentFromReader(res.Body)
@@ -126,32 +112,11 @@ func boardPostsWithPath(ctx context.Context, client *http.Client, path string) (
 		var date time.Time
 		dateText, ok := entryNode.Find("td.gall_date").Attr("title")
 		if ok && dateText != "" {
-			date, err = time.ParseInLocation(dateFormat, dateText, dateLocation)
-			if err != nil {
-				date, err = time.ParseInLocation(dateFormatAlt, dateText, dateLocation)
-				if err != nil {
-					date, err = time.ParseInLocation(dateFormatAlt2, dateText, dateLocation)
-					if err != nil {
-						return nil, err
-					}
-				}
-			}
+			date, err = parseDate(dateText)
 		} else {
 			dateText := entryNode.Find("td.gall_date").Text()
 			if dateText != "" {
-				date, err = time.ParseInLocation(dateFormatShort, dateText, dateLocation)
-				if err != nil {
-					date, err = time.ParseInLocation(dateFormatShortAlt, dateText, dateLocation)
-					if err != nil {
-						date, err = time.ParseInLocation(dateFormatShortAlt2, dateText, dateLocation)
-						if err != nil {
-							date, err = time.ParseInLocation(dateFormatShortAlt3, dateText, dateLocation)
-							if err != nil {
-								return nil, err
-							}
-						}
-					}
-				}
+				date, err = parseDate(dateText)
 			}
 		}
 		hitsText := entryNode.Find("td.gall_count").Eq(0).Text()
