@@ -59,19 +59,17 @@ func (g *GInside) PostDetails(ctx context.Context, link string) (*PostDetails, e
 	postHTML = strings.Replace(strings.Replace(postHTML, "\n", "", -1), "\t", "", -1)
 	details.ContentHTML = postHTML
 
-	attachments := mainDoc.Find("ul.appending_file")
+	attachments := mainDoc.Find("ul.appending_file li")
 	var attachment PostAttachment
-	for _, entry := range attachments.Nodes {
-		entryNode := goquery.NewDocumentFromNode(entry)
-
+	attachments.Each(func(_ int, selection *goquery.Selection) {
 		attachment = PostAttachment{}
-		attachment.URL, _ = entryNode.Find("a").Attr("href")
-		attachment.Filename = entryNode.Find("a").Text()
+		attachment.URL, _ = selection.Find("a").Attr("href")
+		attachment.Filename = selection.Find("a").Text()
 
 		if attachment.URL != "" {
 			details.Attachments = append(details.Attachments, attachment)
 		}
-	}
+	})
 
 	return &details, nil
 }
